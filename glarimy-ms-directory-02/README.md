@@ -1,7 +1,6 @@
 # Spring Boot Microservice with JPA Data Repository #
 
 1. Generate project with Spring Web, Spring Data JPA and Validation dependencies
-
 ```
 https://start.spring.io/
 ```
@@ -311,7 +310,6 @@ public class EmployeeController {
 ```
 
 8. DirectoryApplication.java
-
 ```
 package com.glarimy.directory;
 
@@ -349,7 +347,6 @@ spring.jpa.hibernate.ddl-auto=update
 ```
 
 10. Build the project
-
 ```
 mvn clean package
 ```
@@ -361,9 +358,7 @@ mvn clean package
 java -jar target/glarimy-directory.jar
 ```
 
-12. Verify the API
-
-
+13. Verify the API
 ```
 http://localhost:8080/directory/v1/swagger-ui.html
 ```
