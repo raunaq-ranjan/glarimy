@@ -1,11 +1,11 @@
 # Spring Boot Microservice with JPA Data Repository #
 
-1. Generate project with Spring Web, Spring Data JPA and Validation dependencies
+1. Generate project with Spring Web, Spring Reactive MongoDB and Validation dependencies
 ```
 https://start.spring.io/
 ```
 
-2. Add `MySQL Driver` and `swagger` to the pom.xml
+2. Add `swagger` to the pom.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
@@ -33,7 +33,7 @@ https://start.spring.io/
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
+			<artifactId>spring-boot-starter-data-mongodb-reactive</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -51,11 +51,6 @@ https://start.spring.io/
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.springfox</groupId>
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.4.0</version>
@@ -65,8 +60,11 @@ https://start.spring.io/
 			<artifactId>springfox-swagger-ui</artifactId>
 			<version>2.4.0</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+		</dependency>
 	</dependencies>
-
 	<build>
 		<finalName>glarimy-directory</finalName>
 		<plugins>
@@ -84,17 +82,16 @@ https://start.spring.io/
 ```
 package com.glarimy.directory.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
 
-@Entity
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document
 public class Employee {
 	@Id
-	@GeneratedValue
-	private int id;
+	private String id;
 
 	@Pattern(regexp = "^[a-zA-Z]+(\\s[a-zA-Z]+)?$")
 	@NotEmpty
@@ -102,11 +99,11 @@ public class Employee {
 
 	private long phone;
 
-	public int getId() {
+	public String getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 
@@ -124,6 +121,11 @@ public class Employee {
 
 	public void setPhone(long phone) {
 		this.phone = phone;
+	}
+
+	@Override
+	public String toString() {
+		return "Employee [id=" + id + ", name=" + name + ", phone=" + phone + "]";
 	}
 
 }
@@ -168,18 +170,17 @@ public class EmployeeNotFoundException extends RuntimeException {
 ```
 package com.glarimy.directory.data;
 
-import java.util.List;
-
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.mongodb.repository.ReactiveMongoRepository;
 import org.springframework.stereotype.Repository;
 
 import com.glarimy.directory.domain.Employee;
 
-@Repository
-public interface EmployeeRepository extends JpaRepository<Employee, Integer>{
-	List<Employee> findByNameIgnoreCaseContaining(String token);
-}
+import reactor.core.publisher.Flux;
 
+@Repository
+public interface EmployeeRepository extends ReactiveMongoRepository<Employee, String>{
+	Flux<Employee> findByNameIgnoreCaseContaining(String token);
+}
 ```
 
 6. Error.java
@@ -259,6 +260,8 @@ import com.glarimy.directory.data.EmployeeRepository;
 import com.glarimy.directory.domain.Employee;
 import com.glarimy.directory.domain.EmployeeNotFoundException;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @RestController
@@ -271,25 +274,22 @@ public class EmployeeController {
 	private EmployeeRepository repo;
 
 	@PostMapping("/employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody Employee employee) {
-		Employee entity = repo.save(employee);
-		return new ResponseEntity<Employee>(entity, HttpStatus.CREATED);
+	public Mono<Employee> create(@Valid @RequestBody Employee employee) {
+		return repo.save(employee);
 	}
 
 	@GetMapping("/employee/{id}")
-	public ResponseEntity<Employee> find(@PathVariable("id") int id) {
-		Employee employee = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException());
-		return new ResponseEntity<Employee>(employee, HttpStatus.OK);
+	public Mono<Employee> find(@PathVariable("id") String id) {
+		Mono<Employee> employee = repo.findById(id);
+		return employee;
 	}
 
 	@GetMapping("/employee")
-	public ResponseEntity<List<Employee>> search(@RequestParam(value = "name", defaultValue = "") String name) {
-		List<Employee> employees;
+	public Flux<Employee> search(@RequestParam(value = "name", defaultValue = "") String name) {
 		if (name == "")
-			employees = repo.findAll();
-		else
-			employees = repo.findByNameIgnoreCaseContaining(name);
-		return new ResponseEntity<List<Employee>>(employees, HttpStatus.OK);
+			return repo.findAll();
+
+		return repo.findByNameIgnoreCaseContaining(name);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
@@ -341,42 +341,37 @@ public class DirectoryApplication {
 ```
 server.port=8080
 server.servlet.context-path=/directory/v1
-spring.datasource.url=jdbc:mysql://localhost:3306/glarimy?useSSL=false
-spring.datasource.username=root
-spring.datasource.password=admin
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-spring.jpa.hibernate.ddl-auto=update
+spring.data.mongodb.uri=mongodb://localhost:27017/glarimy
 ```
 
 10. test/resources/application.properties
 ```
 server.port=8080
 server.servlet.context-path=/directory/v1
-spring.datasource.url=jdbc:mysql://localhost:3306/tests?useSSL=false
-spring.datasource.username=root
-spring.datasource.password=admin
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-spring.jpa.hibernate.ddl-auto=update
+spring.data.mongodb.uri=mongodb://localhost:27017/glarimy
 ```
 
 11. DirectoryApplicationTests.java
 ```
 package com.glarimy.directory;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.glarimy.directory.domain.Employee;
 
+@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
 public class DirectoryApplicationTests {
 	@Autowired
@@ -391,7 +386,7 @@ public class DirectoryApplicationTests {
 		Employee e = new Employee();
 		e.setName("Krishna");
 		e.setPhone(123456);
-
+		
 		ResponseEntity<Employee> response = restTemplate.postForEntity("/employee", e, Employee.class);
 		Employee entity = response.getBody();
 		assertTrue(entity.getId() > 0);
@@ -401,7 +396,11 @@ public class DirectoryApplicationTests {
 	}
 }
 ```
-12. Run MySQL server and create `glarimy` and `tests` databases
+12. Run MongoDB server
+```
+sudo su
+./mongod -dbpath=path/to/data/folder
+```
 
 13. Build and test the project
 ```

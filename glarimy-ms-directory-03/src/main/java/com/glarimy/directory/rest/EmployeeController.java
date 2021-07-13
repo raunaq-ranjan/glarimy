@@ -24,6 +24,8 @@ import com.glarimy.directory.data.EmployeeRepository;
 import com.glarimy.directory.domain.Employee;
 import com.glarimy.directory.domain.EmployeeNotFoundException;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @RestController
@@ -36,25 +38,22 @@ public class EmployeeController {
 	private EmployeeRepository repo;
 
 	@PostMapping("/employee")
-	public ResponseEntity<Employee> create(@Valid @RequestBody Employee employee) {
-		Employee entity = repo.save(employee);
-		return new ResponseEntity<Employee>(entity, HttpStatus.CREATED);
+	public Mono<Employee> create(@Valid @RequestBody Employee employee) {
+		return repo.save(employee);
 	}
 
 	@GetMapping("/employee/{id}")
-	public ResponseEntity<Employee> find(@PathVariable("id") int id) {
-		Employee employee = repo.findById(id).orElseThrow(() -> new EmployeeNotFoundException());
-		return new ResponseEntity<Employee>(employee, HttpStatus.OK);
+	public Mono<Employee> find(@PathVariable("id") String id) {
+		Mono<Employee> employee = repo.findById(id);
+		return employee;
 	}
 
 	@GetMapping("/employee")
-	public ResponseEntity<List<Employee>> search(@RequestParam(value = "name", defaultValue = "") String name) {
-		List<Employee> employees;
+	public Flux<Employee> search(@RequestParam(value = "name", defaultValue = "") String name) {
 		if (name == "")
-			employees = repo.findAll();
-		else
-			employees = repo.findByNameIgnoreCaseContaining(name);
-		return new ResponseEntity<List<Employee>>(employees, HttpStatus.OK);
+			return repo.findAll();
+
+		return repo.findByNameIgnoreCaseContaining(name);
 	}
 
 	@ExceptionHandler({ MethodArgumentNotValidException.class })
