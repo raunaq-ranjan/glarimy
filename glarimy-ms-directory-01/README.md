@@ -6,15 +6,61 @@
 https://start.spring.io/
 ```
 
-!(springio.png)[springio.png]
+![springio.png](springio.png)
 
 2. Import the project into IDE and add `finalName` to the `pom.xml`
 
 ```
-<build>
-	<finalName>glarimy-directory</finalName>
-	...
-</build>
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.4.8</version>
+		<relativePath /> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.glarimy</groupId>
+	<artifactId>directory</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>directory</name>
+	<description>Directory Microservice</description>
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<finalName>glarimy-directory</finalName>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
 ```
 
 3. Edit the DirectoryApplication.java
@@ -48,6 +94,8 @@ public class DirectoryApplication {
 
 ```
 mvn clean package
+```
+```
 java -jar target/glarimy-directory.jar
 ```
 
