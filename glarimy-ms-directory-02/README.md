@@ -335,7 +335,7 @@ public class DirectoryApplication {
 }
 ```
 
-9. application.properties
+9. main/resources/application.properties
 ```
 server.port=8080
 server.servlet.context-path=/directory/v1
@@ -346,19 +346,75 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-10. Build the project
+10. test/resources/application.properties
 ```
-mvn clean package
+server.port=8080
+server.servlet.context-path=/directory/v1
+spring.datasource.url=jdbc:mysql://localhost:3306/tests?useSSL=false
+spring.datasource.username=root
+spring.datasource.password=admin
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
+spring.jpa.hibernate.ddl-auto=update
 ```
 
-11. Run MySQL server and create `glarimy` database
+11. DirectoryApplicationTests.java
+```
+package com.glarimy.directory;
 
-12. Run the project
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.glarimy.directory.domain.Employee;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class DirectoryApplicationTests {
+	@Autowired
+	private TestRestTemplate restTemplate;
+
+	@Test
+	void contextLoads() {
+	}
+
+	@Test
+	public void testAPI() throws JsonProcessingException, IOException {
+		Employee e = new Employee();
+		e.setName("Krishna");
+		e.setPhone(123456);
+		
+		ResponseEntity<Employee> response = restTemplate.postForEntity("/employee", e, Employee.class);
+		Employee entity = response.getBody();
+		assertTrue(entity.getId() > 0);
+
+		ResponseEntity<Employee> result = restTemplate.getForEntity("/employee/" + entity.getId(), Employee.class);
+		assertTrue(result.getBody().getName().contains("Krishna"));
+	}
+}
+```
+12. Run MySQL server and create `glarimy` and `tests` databases
+
+13. Build and test the project
+```
+mvn clean test
+```
+
+14. Run the project
 ```
 java -jar target/glarimy-directory.jar
 ```
 
-13. Verify the API
+15. Verify the API
 ```
 http://localhost:8080/directory/v1/swagger-ui.html
 ```

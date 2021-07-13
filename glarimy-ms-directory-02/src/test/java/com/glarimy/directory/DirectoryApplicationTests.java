@@ -1,13 +1,42 @@
 package com.glarimy.directory;
 
-import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest
-class DirectoryApplicationTests {
+import java.io.IOException;
+
+import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.junit4.SpringRunner;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.glarimy.directory.domain.Employee;
+
+@RunWith(SpringRunner.class)
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+public class DirectoryApplicationTests {
+	@Autowired
+	private TestRestTemplate restTemplate;
 
 	@Test
 	void contextLoads() {
 	}
 
+	@Test
+	public void testAPI() throws JsonProcessingException, IOException {
+		Employee e = new Employee();
+		e.setName("Krishna");
+		e.setPhone(123456);
+		
+		ResponseEntity<Employee> response = restTemplate.postForEntity("/employee", e, Employee.class);
+		Employee entity = response.getBody();
+		assertTrue(entity.getId() > 0);
+
+		ResponseEntity<Employee> result = restTemplate.getForEntity("/employee/" + entity.getId(), Employee.class);
+		assertTrue(result.getBody().getName().contains("Krishna"));
+	}
 }
