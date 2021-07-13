@@ -6,6 +6,8 @@
 https://start.spring.io/
 ```
 
+!(springio.png)[springio.png]
+
 2. Import the project into IDE and add `finalName` to the `pom.xml`
 
 ```
