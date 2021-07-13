@@ -6,7 +6,7 @@
 https://start.spring.io/
 ```
 
-2. pom.xml
+2. Add `MySQL Driver` and `swagger` to the pom.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
