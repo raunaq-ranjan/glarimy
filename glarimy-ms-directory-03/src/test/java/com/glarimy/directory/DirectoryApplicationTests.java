@@ -26,7 +26,7 @@ public class DirectoryApplicationTests {
 	@Test
 	public void testAPI() throws JsonProcessingException, IOException {
 		Employee e = new Employee();
-		e.setName("Krishna");
+		e.setName("Koyya");
 		e.setPhone(123456);
 		
 		ResponseEntity<Employee> response = restTemplate.postForEntity("/employee", e, Employee.class);
@@ -34,6 +34,6 @@ public class DirectoryApplicationTests {
 		assertTrue(entity.getId().length() > 0);
 
 		ResponseEntity<Employee> result = restTemplate.getForEntity("/employee/" + entity.getId(), Employee.class);
-		assertTrue(result.getBody().getName().contains("Krishna"));
+		assertTrue(result.getBody().getName().contains("Koyya"));
 	}
 }
