@@ -7,5 +7,7 @@
 5. Spring Cloud
 
 	5.1. [Eureka Registery and Discovery Service](glarimy-ms-eureka)
+
 	5.2. [Gateway Service](glarimy-ms-gateway)
+	
 	5.3. [Microservice](glarimy-ms-service)

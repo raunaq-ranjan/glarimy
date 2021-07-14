@@ -113,7 +113,7 @@ management:
 
 6. Build and run the application
 
-7. Run the [glarimy-ms-service](glarimy-ms-service) application
+7. Run the [glarimy-ms-service](https://bitbucket.org/glarimy/glarimy-ms/src/master/glarimy-ms-service) application
 
 8. Access the application via gateway
 ```
