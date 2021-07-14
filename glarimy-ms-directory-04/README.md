@@ -348,72 +348,76 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-10. test/resources/application.properties
+10. Dockerfile
 ```
-server.port=8080
-server.servlet.context-path=/directory/v1
-spring.datasource.url=jdbc:mysql://localhost:3306/tests?useSSL=false
-spring.datasource.username=root
-spring.datasource.password=admin
-spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
-spring.jpa.hibernate.ddl-auto=update
-```
-
-11. DirectoryApplicationTests.java
-```
-package com.glarimy.directory;
-
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.io.IOException;
-
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.ResponseEntity;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.glarimy.directory.domain.Employee;
-
-@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
-public class DirectoryApplicationTests {
-	@Autowired
-	private TestRestTemplate restTemplate;
-
-	@Test
-	void contextLoads() {
-	}
-
-	@Test
-	public void testAPI() throws JsonProcessingException, IOException {
-		Employee e = new Employee();
-		e.setName("Krishna");
-		e.setPhone(123456);
-
-		ResponseEntity<Employee> response = restTemplate.postForEntity("/employee", e, Employee.class);
-		Employee entity = response.getBody();
-		assertTrue(entity.getId() > 0);
-
-		ResponseEntity<Employee> result = restTemplate.getForEntity("/employee/" + entity.getId(), Employee.class);
-		assertTrue(result.getBody().getName().contains("Krishna"));
-	}
-}
-```
-12. Run MySQL server and create `glarimy` and `tests` databases
-
-13. Build and test the project
-```
-mvn clean test
+FROM maven:3.5-jdk-8 AS build
+COPY src /usr/glarimy/src
+COPY pom.xml /usr/glarimy
+RUN mvn -f /usr/glarimy/pom.xml clean package
+EXPOSE 8080
+ENTRYPOINT ["java","-Dspring.datasource.url=jdbc:mysql://mysqldb:3306/glarimy?useSSL=false&allowPublicKeyRetrieval=true","-jar","/usr/glarimy/target/glarimy-directory.jar"]
 ```
 
-14. Run the project
+11. Run the project
 ```
 java -jar target/glarimy-directory.jar
 ```
 
-15. Verify the API
+12. Verify the API
 ```
 http://localhost:8080/directory/v1/swagger-ui.html
+```
+
+13. Login to `https://labs.play-with-docker.com/` with your `docker-hub` id and start a Linux instance
+
+14. Clone the code repository on to the instance
+
+```
+git clone https://glarimy@bitbucket.org/glarimy/glarimy-ms.git
+```
+
+15. Build the docker image
+```
+cd glarimy-ms/glarimy-ms-directory-04
+```
+
+```
+docker build -t glarimy/glarimy-directory .
+```
+16. Create a network
+
+```
+docker network create glarimy
+```
+
+17. Run the `mysql` docker container
+
+```
+docker container run --name mysqldb --network glarimy -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=glarimy -d mysql
+```
+```
+docker container logs -f mysqldb
+```
+
+18. Run the `glarimy-directory` docker container
+```
+docker container run --network glarimy --name library -p 8080:8080  glarimy/library
+```
+```
+docker container exec -it mysqldb bash
+```
+
+19. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
+
+```
+<docker-exposed-url>/directory/v1/swagger-ui.html
+```
+
+20. Some useful Docker commands
+```
+docker ps // lists the running docker containers
+docker ps -a // lists all docker containers
+docker container rm <name>
+docker images // lists docker images
+docker network ls // lists the networks
 ```
