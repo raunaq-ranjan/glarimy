@@ -1,0 +1,78 @@
+Target Audience: Java Developers, Designers and Architects
+Pre-requisites: 
+	1. Experience in developing traditional web applications using Java
+	2. Decent understanding of web applications and databases
+Lab Setup:
+    1. JDK 8+
+    2. IDE like Eclipse
+Approach: 
+	0: Assumption is that the participants are already good at developing web applications using Java in a traditional way by using Servlets/JSP, ORM solutions and etc., 
+	1. Participants will be divided into groups of 4-5 people to do problem solving & hands-on
+	2. First day would be at a slower pace to get everyone on to the same page
+	3. Subsequent days would be at a faster pace
+	4. Concepts would be discussed and worked-on before attempting the comprehensive case-studies
+	5. Most of the hands-on would be during the post-noon sessions
+
+Course Outline
+	DAY-1
+	Understanding Webscale
+	Challenges with Monolith deployments
+	Moving to Distributed Computing
+	Introduction to Microservices
+
+	Service Decomposition
+	REST API Design
+	Using Jersey
+	Using Spring
+	Hands-on with Spring REST
+
+	Data Management
+	RDBMS Vs NoSQL
+	Transactions
+	Hands-on with Spring-Data
+	Dedicated Vs Shared Databases
+	CQRS
+	Event Sourcing
+	Sagas
+
+	DAY-2
+	Service Deployment
+	Gateway
+	Registries
+	Service Discovery
+	Circuit Breaker
+	Containerization
+	Dockers
+	Hands-on with Spring Cloud
+
+	Container Orchestration
+	Kubernetes
+	Other Solutions
+
+	Security
+	JWT Tokens
+	OAuth
+
+	Distributed Cache
+	Hands-on with Redis
+
+	Thoughts on UI
+	Component Frameworks
+	Websockets
+	Session Management
+
+	DAY-3
+	Inter-service Communication
+	Distributed Monolith
+	Messaging
+	Hands-on with Kafka
+	RPI
+
+	Observability
+	Log Aggregation
+	Distributed Tracing
+
+	Thoughts on Cloud Solutions
+	Serverless   
+
+	Putting all together 
