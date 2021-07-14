@@ -379,10 +379,10 @@ git clone https://glarimy@bitbucket.org/glarimy/glarimy-ms.git
 ```
 cd glarimy-ms/glarimy-ms-directory-04
 ```
-
 ```
 docker build -t glarimy/glarimy-directory .
 ```
+
 16. Create a network
 ```
 docker network create glarimy
