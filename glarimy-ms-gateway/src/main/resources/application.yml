@@ -1,0 +1,21 @@
+server:
+  port: 8080
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8081/eureka 
+spring:
+  application:
+    name: glarimy-gateway
+  cloud:
+    gateway:
+      routes:
+      - id: glarimy-service
+        uri: lb://GLARIMY-SERVICE
+        predicates:
+        - Path=/service/v1/**
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
