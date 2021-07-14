@@ -371,7 +371,6 @@ http://localhost:8080/directory/v1/swagger-ui.html
 13. Login to `https://labs.play-with-docker.com/` with your `docker-hub` id and start a Linux instance
 
 14. Clone the code repository on to the instance
-
 ```
 git clone https://glarimy@bitbucket.org/glarimy/glarimy-ms.git
 ```
@@ -385,13 +384,11 @@ cd glarimy-ms/glarimy-ms-directory-04
 docker build -t glarimy/glarimy-directory .
 ```
 16. Create a network
-
 ```
 docker network create glarimy
 ```
 
 17. Run the `mysql` docker container
-
 ```
 docker container run --name mysqldb --network glarimy -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=glarimy -d mysql
 ```
@@ -408,7 +405,6 @@ docker container exec -it mysqldb bash
 ```
 
 19. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
-
 ```
 <docker-exposed-url>/directory/v1/swagger-ui.html
 ```
