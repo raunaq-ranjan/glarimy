@@ -11,6 +11,7 @@
 	5.2. [Gateway Service](glarimy-ms-gateway)
 	
 	5.3. [Microservice](glarimy-ms-service)
+	
 6. CQRS and Kafka Messaging
 
 	6.1. [Command Service](glarimy-ms-cqrs-01)
