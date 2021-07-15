@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: directory
+  labels:
+    name: directory-pod
+spec:
+  containers:
+    -
+      name: directory
+      image: glarimy/glarimy-directory
+      ports:
+        -
+          containerPort: 8080

@@ -8,11 +8,11 @@ kubectl create -f mysql-pod.yml
 
 kubectl expose pod mysqldb --port=3306 --name=mysqldb --type=NodePort
 
-kubectl apply -f bank-deployment.yml
+kubectl apply -f directory-deployment.yml
 
-kubectl expose deployment/bank --port=8080 --name=bank --type=NodePort
+kubectl expose deployment/directory --port=8080 --name=directory --type=NodePort
 
-kubectl scale deployments/bank --replicas=5
+kubectl scale deployments/directory --replicas=5
 
 minikube ip
 
