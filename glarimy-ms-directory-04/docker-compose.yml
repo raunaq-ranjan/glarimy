@@ -1,6 +1,6 @@
 version: "3"
 services:
-  library:
+  directory:
     image: glarimy/glarimy-directory:latest
     ports:
       - "8080:8080"
