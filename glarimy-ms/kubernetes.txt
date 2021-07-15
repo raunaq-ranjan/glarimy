@@ -12,6 +12,10 @@ kubectl apply -f directory-deployment.yml
 
 kubectl expose deployment/directory --port=8080 --name=directory --type=NodePort
 
+kubectl get pods
+
+kubectl logs <pod>
+
 kubectl scale deployments/directory --replicas=5
 
 minikube ip

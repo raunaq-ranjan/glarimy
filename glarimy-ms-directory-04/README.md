@@ -1,5 +1,7 @@
 # Spring Boot Microservice with JPA Data Repository #
 
+## Building the service ###
+
 1. Generate project with Spring Web, Spring Data JPA and Validation dependencies
 ```
 https://start.spring.io/
@@ -358,6 +360,8 @@ java -jar target/glarimy-directory.jar
 http://localhost:8080/directory/v1/swagger-ui.html
 ```
 
+## Containerized Deployment ##
+
 12. Dockerfile
 ```
 FROM maven:3.5-jdk-8 AS build
@@ -383,12 +387,20 @@ cd glarimy-ms/glarimy-ms-directory-04
 docker build -t glarimy/glarimy-directory .
 ```
 
-16. Create a network
+16. Pubslih the docker image to the docker hub
+```
+docker login
+```
+```
+docker push glarimy/glarimy-directory
+```
+
+17. Create a network
 ```
 docker network create glarimy
 ```
 
-17. Run the `mysql` docker container
+18. Run the `mysql` docker container
 ```
 docker container run --name mysqldb --network glarimy -e MYSQL_ROOT_PASSWORD=admin -e MYSQL_DATABASE=glarimy -d mysql
 ```
@@ -396,7 +408,7 @@ docker container run --name mysqldb --network glarimy -e MYSQL_ROOT_PASSWORD=adm
 docker container logs -f mysqldb
 ```
 
-18. Run the `glarimy-directory` docker container
+19. Run the `glarimy-directory` docker container
 ```
 docker container run --network glarimy --name library -p 8080:8080  glarimy/library
 ```
@@ -404,12 +416,12 @@ docker container run --network glarimy --name library -p 8080:8080  glarimy/libr
 docker container exec -it mysqldb bash
 ```
 
-19. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
+20. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
 ```
 <docker-exposed-url>/directory/v1/swagger-ui.html
 ```
 
-20. Some useful Docker commands
+21. Some useful Docker commands
 ```
 docker ps // lists the running docker containers
 docker ps -a // lists all docker containers
@@ -417,8 +429,9 @@ docker container rm <name>
 docker images // lists docker images
 docker network ls // lists the networks
 ```
+## Multi-Container Deployment ##
 
-21. docker-compose.yml
+22. docker-compose.yml
 ```
 version: "3"
 services:
@@ -443,12 +456,147 @@ networks:
   glarimy: 
 ```
 
-22. Multi-container deployment
+23. Multi-container deployment
 ```
 docker-compose up
 ```
 
-23. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
+24. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
 ```
 <docker-exposed-url>/directory/v1/swagger-ui.html
+```
+
+## Container Orchestration ##
+
+25. mysql-pod.yml
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: mysqldb
+  labels:
+    name: mysql-pod
+spec:
+  containers:
+    -
+      name: mysql
+      image: mysql:latest
+      env:
+        -
+          name: "MYSQL_PASSWORD"
+          value: "admin"
+        -
+          name: "MYSQL_DATABASE"
+          value: "glarimy"
+        -
+          name: "MYSQL_ROOT_PASSWORD"
+          value: "admin"
+      ports:
+        -
+          containerPort: 3306
+```
+
+26. directory-pod.yml
+```
+apiVersion: v1
+kind: Pod
+metadata:
+  name: directory
+  labels:
+    name: directory-pod
+spec:
+  containers:
+    -
+      name: directory
+      image: glarimy/glarimy-directory
+      ports:
+        -
+          containerPort: 8080
+```
+
+27. directory-deployment.yml
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: directory
+  labels:
+    app: directory
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: directory
+  template:
+    metadata:
+      labels:
+        app: directory
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+      containers:
+      - name: directory
+        image: glarimy/glarimy-directory
+        ports:
+        - containerPort: 8080
+```
+
+28. Login to [https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/](https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/) with docker credentials
+
+29. Get the deployment files
+```
+git clone https://glarimy@bitbucket.org/glarimy/glarimy-ms.git
+cd glarimy-ms/glarimy-directory-04
+```
+
+30. Start single node cluster
+```
+minikube start
+```
+
+31. Launch a pod with MySQL
+```
+kubectl create -f mysql-pod.yml
+kubectl get pods
+kubectl describe pods
+kubectl logs mysqldb
+kubectl exec -it mysqldb bash
+```
+
+32. Expose MySQL as a service
+```
+kubectl expose pod mysqldb --port=3306 --name=mysqldb --type=NodePort
+kubectl get services
+kubectl describe services
+```
+33. Launch pod replicas with `glarimy-directory`
+```
+kubectl apply -f directory-deployment.yml
+kubectl get deployments
+kubectl get pods
+kubectl describe pods
+kubectl logs directory
+```
+
+34. Expose `directory` as a service
+```
+kubectl expose deployment/directory --port=8080 --name=directory --type=NodePort
+kubectl get services
+kubectl describe services
+```
+
+35. Access the services locally
+```
+minikube ip
+curl http://<minikube-ip>:<node-port>/directory/v1/employee?name=Koyya
+curl -X POST -H 'Content-Type: application/json' -i http://<minikube-ip>:<node-port>/directory/v1/employee --data '{"name":"Koyya", "phone":"9731423166"}'
+```
+
+36. Scale up
+```
+kubectl scale deployments/directory --replicas=5
+kubectl get pods
 ```
