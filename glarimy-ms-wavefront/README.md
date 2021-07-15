@@ -1,8 +1,8 @@
 # Observing Spring Boot Metrics #
 
-2. Generate Spring Boot Application from [https://start.spring.io/](https://start.spring.io/) with `web` and `wavefront` dependencies.
+1. Generate Spring Boot Application from [https://start.spring.io/](https://start.spring.io/) with `web` and `wavefront` dependencies.
 
-3. pom.xml
+2. pom.xml
 ```
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -63,7 +63,7 @@
 </project>
 ```
 
-4. Microservice.java
+3. Microservice.java
 ```
 package com.glarimy.ms;
 
@@ -89,14 +89,14 @@ public class Microservice {
 }
 ```
 
-5. application.properties
+4. application.properties
 ```
 wavefront.application.name=glarimy-ms-wafefront
 wavefront.application.service=glarimy-service
 management.endpoints.web.exposure.include=health,info,wavefront
 ```
 
-6. Run the application and find the free API key generated and other info. Update the application.properties
+5. Run the application and find the free API key generated and other info. Update the application.properties
 ```
 wavefront.application.name=glarimy-ms-wafefront
 wavefront.application.service=glarimy-service
@@ -105,11 +105,9 @@ management.metrics.export.wavefront.uri=https://wavefront.surf
 management.endpoints.web.exposure.include=health,info,wavefront
 ```
 
-7. Use the application
+6. Use the application
 [http://localhost:8080/hello?name=Koyya](http://localhost:8080/hello?name=Koyya)
 
-8. Visit the metrics in either of these ways
-
+7. Visit the metrics in either of these ways
 *[https://wavefront.surf/us/<key>](https://wavefront.surf/us/<key>)
-
 *[http://localhost:8080/actuator/wavefront](http://localhost:8080/actuator/wavefront)
