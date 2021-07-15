@@ -6,7 +6,7 @@ zookeeper-server-start.sh ../config/zookeeper.properties
 kafka-server-start.sh ../config/server.properties
 ```
 
-2. Generate Spring Boot Application from [https://start.spring.io/](https://start.spring.io/) with `Apache Kafka` dependency.
+2. Generate Spring Boot Application from [https://start.spring.io/](https://start.spring.io/) with `Apache Kafka` and `Spring Web` dependencies.
 
 3. Add `swagger` to pom.xml
 ```
