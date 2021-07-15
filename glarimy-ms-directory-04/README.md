@@ -410,7 +410,7 @@ docker container logs -f mysqldb
 
 19. Run the `glarimy-directory` docker container
 ```
-docker container run --network glarimy --name library -p 8080:8080  glarimy/library
+docker container run --network glarimy --name glarimy-directory -p 8080:8080  glarimy/glarimy-directory
 ```
 ```
 docker container exec -it mysqldb bash

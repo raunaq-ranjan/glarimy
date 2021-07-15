@@ -1,6 +1,6 @@
 https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/
 
-git clone https://github.com/glarimy/bank-cloud-serivce.git
+git clone https://glarimy@bitbucket.org/glarimy/glarimy-ms.git
 
 minikube start
 
