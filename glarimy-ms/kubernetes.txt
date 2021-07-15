@@ -1,0 +1,27 @@
+https://kubernetes.io/docs/tutorials/kubernetes-basics/create-cluster/cluster-interactive/
+
+git clone https://github.com/glarimy/bank-cloud-serivce.git
+
+minikube start
+
+kubectl create -f mysql-pod.yml
+
+kubectl expose pod mysqldb --port=3306 --name=mysqldb --type=NodePort
+
+kubectl apply -f bank-deployment.yml
+
+kubectl expose deployment/bank --port=8080 --name=bank --type=NodePort
+
+kubectl scale deployments/bank --replicas=5
+
+minikube ip
+
+kubectl get services
+
+curl -X POST -H 'Content-Type: application/json' -i 172.17.0.24:8080/account/ --data '{"name":"Krishna", "phone":"9731423166"}'
+
+curl '<minikube ip>:<nodePort>/account/1'
+
+curl -X POST -H 'Content-Type: application/json' -i <minikube ip>:<nodePort>/account/1/transaction' --data '{"amount":100, "type":"CR"}'
+
+curl '<minikube ip>:<nodePort>/account/1'
