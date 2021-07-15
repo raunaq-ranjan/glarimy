@@ -348,7 +348,17 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5Dialect
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-10. Dockerfile
+10. Run the project
+```
+java -jar target/glarimy-directory.jar
+```
+
+11. Verify the API
+```
+http://localhost:8080/directory/v1/swagger-ui.html
+```
+
+12. Dockerfile
 ```
 FROM maven:3.5-jdk-8 AS build
 COPY src /usr/glarimy/src
@@ -358,17 +368,7 @@ EXPOSE 8080
 ENTRYPOINT ["java","-Dspring.datasource.url=jdbc:mysql://mysqldb:3306/glarimy?useSSL=false&allowPublicKeyRetrieval=true","-jar","/usr/glarimy/target/glarimy-directory.jar"]
 ```
 
-11. Run the project
-```
-java -jar target/glarimy-directory.jar
-```
-
-12. Verify the API
-```
-http://localhost:8080/directory/v1/swagger-ui.html
-```
-
-13. Login to `https://labs.play-with-docker.com/` with your `docker-hub` id and start a Linux instance
+13. Login to [https://labs.play-with-docker.com/](https://labs.play-with-docker.com/) with `docker-hub` id and start a Linux instance
 
 14. Clone the code repository on to the instance
 ```
@@ -416,4 +416,39 @@ docker ps -a // lists all docker containers
 docker container rm <name>
 docker images // lists docker images
 docker network ls // lists the networks
+```
+
+21. docker-compose.yml
+```
+version: "3"
+services:
+  library:
+    image: glarimy/glarimy-directory:latest
+    ports:
+      - "8080:8080"
+    networks:
+      - glarimy
+    depends_on:
+      - mysqldb
+ 
+  mysqldb:
+    image: mysql:latest
+    networks:
+      - glarimy
+    environment:
+      - MYSQL_ROOT_PASSWORD=admin
+      - MYSQL_DATABASE=glarimy
+
+networks:
+  glarimy: 
+```
+
+22. Multi-container deployment
+```
+docker-compose up
+```
+
+23. Find the exposed URL against the port 8080 and verify the `glarimy-directory` service
+```
+<docker-exposed-url>/directory/v1/swagger-ui.html
 ```
