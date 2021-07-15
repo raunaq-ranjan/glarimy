@@ -1,4 +1,4 @@
-# Spring Boot Microservice #
+# Spring Cloud Microservice #
 
 1. Generate project with `Spring Web` and `Eureka Discovery Client` dependency
 ```

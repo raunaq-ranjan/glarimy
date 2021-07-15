@@ -1,4 +1,4 @@
-# Eureka Registry & Discovery Service #
+# Spring Cloud Eureka Service #
 
 1. Generate project from the spring initializer with `Eureka Server` dependency
 ```

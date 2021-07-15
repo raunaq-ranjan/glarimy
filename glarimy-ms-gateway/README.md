@@ -1,4 +1,4 @@
-# Gateway Service #
+# Spring Cloud Gateway Service #
 
 1. Generate project from the spring initializer with `Gateway` and `Eureka Discovery Client` dependencies.
 ```

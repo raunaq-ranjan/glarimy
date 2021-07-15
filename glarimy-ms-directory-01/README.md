@@ -1,4 +1,4 @@
-# Spring Boot Microservices #
+# Spring Boot Microservice #
 
 1. Generate, download and extract `maven` project
 

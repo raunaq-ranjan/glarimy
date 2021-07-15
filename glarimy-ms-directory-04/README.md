@@ -1,4 +1,4 @@
-# Spring Boot Microservice with JPA Data Repository #
+# Containerized Spring Boot Microservice #
 
 ## Building the service ###
 

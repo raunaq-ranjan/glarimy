@@ -1,4 +1,4 @@
-# Spring Boot Microservice with JPA Data Repository #
+# Reactive Spring Boot Microservice with Mongo #
 
 1. Generate project with Spring Web, Spring Reactive MongoDB and Validation dependencies
 ```
