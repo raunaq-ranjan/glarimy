@@ -18,7 +18,7 @@ minikube ip
 
 kubectl get services
 
-curl -X POST -H 'Content-Type: application/json' -i 172.17.0.24:8080/account/ --data '{"name":"Krishna", "phone":"9731423166"}'
+curl -X POST -H 'Content-Type: application/json' -i http://172.17.0.22:30603/account/ --data '{"name":"Krishna", "phone":"9731423166"}'
 
 curl '<minikube ip>:<nodePort>/account/1'
 

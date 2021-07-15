@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: directory
+  labels:
+    app: directory
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: directory
+  template:
+    metadata:
+      labels:
+        app: directory
+    spec:
+      containers:
+      - name: nginx
+        image: nginx:1.7.9
+        ports:
+        - containerPort: 80
+      containers:
+      - name: directory
+        image: glarimy/glarimy-directory
+        ports:
+        - containerPort: 8080
